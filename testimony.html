@@ -18,6 +18,11 @@
         .lyrics span:hover {
             background-color: #f0f0f0;
         }
+        .lyrics span.clicked {
+            color: transparent;
+            text-decoration: underline;
+            text-decoration-color: black;
+        }
     </style>
 </head>
 <body>
@@ -54,7 +59,7 @@
             const lyrics = document.querySelectorAll('.lyrics span');
             lyrics.forEach(word => {
                 word.addEventListener('click', () => {
-                    word.style.display = 'none';
+                    word.classList.add('clicked');
                 });
             });
         });
