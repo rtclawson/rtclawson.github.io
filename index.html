@@ -18,11 +18,6 @@
         .lyrics span:hover {
             background-color: #f0f0f0;
         }
-        .lyrics span.clicked {
-            color: transparent;
-            text-decoration: underline;
-            text-decoration-color: black;
-        }
     </style>
 </head>
 <body>
@@ -64,11 +59,15 @@
                         line.split(' ').forEach(word => {
                             const span = document.createElement('span');
                             span.textContent = word + ' ';
+                            span.setAttribute('data-word', word);
                             span.addEventListener('click', () => {
-                                if (span.classList.contains('clicked')) {
-                                    span.classList.remove('clicked');
+                                if (span.getAttribute('data-hidden') === 'true') {
+                                    span.textContent = span.getAttribute('data-word') + ' ';
+                                    span.setAttribute('data-hidden', 'false');
                                 } else {
-                                    span.classList.add('clicked');
+                                    const underscores = '_'.repeat(word.length);
+                                    span.textContent = underscores + ' ';
+                                    span.setAttribute('data-hidden', 'true');
                                 }
                             });
                             p.appendChild(span);
