@@ -17,7 +17,7 @@
         h1 {
             color: #333;
         }
-        select, input[type="checkbox"] {
+        select, input[type="checkbox"], button {
             margin: 10px 0;
             padding: 5px;
             font-size: 1em;
@@ -56,6 +56,9 @@
                 padding: 10px;
             }
         }
+        #controlButtons {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +67,10 @@
         <option value="">Select a song</option>
     </select>
     <div id="verseCheckboxes"></div>
+    <div id="controlButtons">
+        <button id="restoreButton">Restore All Lyrics</button>
+        <button id="blankButton">Make All Lyrics Blanks</button>
+    </div>
     <div id="lyricsContainer" class="lyrics"></div>
 
     <script>
@@ -71,6 +78,8 @@
             const songSelect = document.getElementById('songSelect');
             const verseCheckboxes = document.getElementById('verseCheckboxes');
             const lyricsContainer = document.getElementById('lyricsContainer');
+            const restoreButton = document.getElementById('restoreButton');
+            const blankButton = document.getElementById('blankButton');
             let currentVerses = [];
 
             fetch('songs.json')
@@ -139,6 +148,23 @@
                     lyricsContainer.appendChild(verseContainer);
                 });
             }
+
+            restoreButton.addEventListener('click', () => {
+                const spans = lyricsContainer.querySelectorAll('span[data-word]');
+                spans.forEach(span => {
+                    span.textContent = span.getAttribute('data-word') + ' ';
+                    span.setAttribute('data-hidden', 'false');
+                });
+            });
+
+            blankButton.addEventListener('click', () => {
+                const spans = lyricsContainer.querySelectorAll('span[data-word]');
+                spans.forEach(span => {
+                    const underscores = '_'.repeat(span.getAttribute('data-word').length);
+                    span.textContent = underscores + ' ';
+                    span.setAttribute('data-hidden', 'true');
+                });
+            });
         });
     </script>
 </body>
