@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickable Lyrics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        select, input[type="checkbox"], button {
+            margin: 10px 0;
+            padding: 5px;
+            font-size: 1em;
+        }
+        #verseCheckboxes {
+            margin: 20px 0;
+            text-align: left;
+        }
+        #lyricsContainer {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .lyrics span {
+            cursor: pointer;
+            padding: 2px;
+            display: inline-block;
+        }
+        .lyrics span:hover {
+            background-color: #e0e0e0;
+        }
+        .lyrics span.clicked {
+            color: transparent;
+            text-decoration: underline;
+            text-decoration-color: black;
+        }
+        label {
+            margin-right: 10px;
+        }
+        @media (max-width: 600px) {
+            #lyricsContainer {
+                padding: 10px;
+            }
+        }
+        #controlButtons {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Disappearing Words</h1>
+    <select id="categorySelect">
+        <option value="">Select Category</option>
+        <option value="hymns">Hymns</option>
+        <option value="childrenssongs">Children's Songs</option>
+    </select>
+    <select id="songSelect">
+        <option value="">Select a song</option>
+    </select>
+    <div id="verseCheckboxes"></div>
+    <div id="controlButtons">
+        <button id="restoreButton">Restore All Lyrics</button>
+        <button id="blankButton">Make All Lyrics Blanks</button>
+    </div>
+    <div id="lyricsContainer" class="lyrics"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categorySelect = document.getElementById('categorySelect');
+            const songSelect = document.getElementById('songSelect');
+            const verseCheckboxes = document.getElementById('verseCheckboxes');
+            const lyricsContainer = document.getElementById('lyricsContainer');
+            const restoreButton = document.getElementById('restoreButton');
+            const blankButton = document.getElementById('blankButton');
+            let currentVerses = [];
+
+            categorySelect.addEventListener('change', () => {
+                const category = categorySelect.value;
+                if (category) {
+                    fetchSongs(category);
+                } else {
+                    songSelect.innerHTML = '<option value="">Select a song</option>';
+                    verseCheckboxes.innerHTML = '';
+                    lyricsContainer.innerHTML = '';
+                }
+            });
+
+            function fetchSongs(category) {
+                const url = category === 'hymns' ? 'hymns.json' : 'childrenssongbook.json';
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        songSelect.innerHTML = '<option value="">Select a song</option>';
+                        data.forEach((song, index) => {
+                            const option = document.createElement('option');
+                            option.value = index;
+                            option.textContent = song.title;
+                            songSelect.appendChild(option);
+                        });
+
+                        songSelect.addEventListener('change', () => {
+                            const selectedSong = data[songSelect.value];
+                            if (selectedSong) {
+                                currentVerses = selectedSong.verses;
+                                displayVerseCheckboxes(selectedSong.verses);
+                            }
+                        });
+                    });
+            }
+
+            function displayVerseCheckboxes(verses) {
+                verseCheckboxes.innerHTML = '';
+                verses.forEach((verse, index) => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `verse${index}`;
+                    checkbox.value = index;
+                    checkbox.addEventListener('change', displayLyrics);
+                    const label = document.createElement('label');
+                    label.htmlFor = `verse${index}`;
+                    label.textContent = `Verse ${index + 1}`;
+                    verseCheckboxes.appendChild(checkbox);
+                    verseCheckboxes.appendChild(label);
+                    verseCheckboxes.appendChild(document.createElement('br'));
+                });
+            }
+
+            function displayLyrics() {
+                lyricsContainer.innerHTML = '';
+                const checkedCheckboxes = verseCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+                checkedCheckboxes.forEach(checkbox => {
+                    const verseIndex = checkbox.value;
+                    const verse = currentVerses[verseIndex];
+                    const verseContainer = document.createElement('div');
+                    verse.forEach(line => {
+                        const p = document.createElement('p');
+                        line.split(' ').forEach(word => {
+                            const span = document.createElement('span');
+                            span.textContent = word + ' ';
+                            span.setAttribute('data-word', word);
+                            span.addEventListener('click', () => {
+                                if (span.getAttribute('data-hidden') === 'true') {
+                                    span.textContent = span.getAttribute('data-word') + ' ';
+                                    span.setAttribute('data-hidden', 'false');
+                                } else {
+                                    const underscores = '_'.repeat(word.length);
+                                    span.textContent = underscores + ' ';
+                                    span.setAttribute('data-hidden', 'true');
+                                }
+                            });
+                            p.appendChild(span);
+                        });
+                        verseContainer.appendChild(p);
+                    });
+                    lyricsContainer.appendChild(verseContainer);
+                });
+            }
+
+            restoreButton.addEventListener('click', () => {
+                const spans = lyricsContainer.querySelectorAll('span[data-word]');
+                spans.forEach(span => {
+                    span.textContent = span.getAttribute('data-word') + ' ';
+                    span.setAttribute('data-hidden', 'false');
+                });
+            });
+
+            blankButton.addEventListener('click', () => {
+                const spans = lyricsContainer.querySelectorAll('span[data-word]');
+                spans.forEach(span => {
+                    const underscores = '_'.repeat(span.getAttribute('data-word').length);
+                    span.textContent = underscores + ' ';
+                    span.setAttribute('data-hidden', 'true');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
