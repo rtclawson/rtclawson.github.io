@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickable Lyrics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .lyrics span {
+            cursor: pointer;
+            padding: 2px;
+            display: inline-block;
+        }
+        .lyrics span:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Song Lyrics</h1>
+    <div class="lyrics">
+        <p id="verse1">
+            <span>The</span> <span>witness</span> <span>of</span> <span>the</span> <span>Holy</span> <span>Ghost,</span> <br>
+            <span>As</span> <span>borne</span> <span>by</span> <span>those</span> <span>who</span> <span>know,</span> <br>
+            <span>Has</span> <span>lifted</span> <span>me</span> <span>again</span> <span>to</span> <span>thee,</span> <br>
+            <span>O</span> <span>Father</span> <span>of</span> <span>my</span> <span>soul.</span>
+        </p>
+        <p id="verse2">
+            <span>I</span> <span>know</span> <span>that</span> <span>thou</span> <span>art</span> <span>in</span> <span>the</span> <span>heav’n.</span> <br>
+            <span>I</span> <span>know</span> <span>the</span> <span>Savior</span> <span>reigns.</span> <br>
+            <span>I</span> <span>know</span> <span>a</span> <span>prophet</span> <span>speaks</span> <span>to</span> <span>us</span> <br>
+            <span>For</span> <span>our</span> <span>eternal</span> <span>gain.</span>
+        </p>
+        <p id="verse3">
+            <span>My</span> <span>eyes</span> <span>are</span> <span>wet;</span> <span>my</span> <span>heart</span> <span>is</span> <span>full.</span> <br>
+            <span>The</span> <span>Spirit</span> <span>speaks</span> <span>today.</span> <br>
+            <span>O</span> <span>Lord,</span> <span>wilt</span> <span>thou</span> <span>my</span> <span>life</span> <span>renew</span> <br>
+            <span>And</span> <span>in</span> <span>my</span> <span>bosom</span> <span>stay.</span>
+        </p>
+        <p id="verse4">
+            <span>As</span> <span>testimony</span> <span>fills</span> <span>my</span> <span>heart,</span> <br>
+            <span>It</span> <span>dulls</span> <span>the</span> <span>pain</span> <span>of</span> <span>days.</span> <br>
+            <span>For</span> <span>one</span> <span>brief</span> <span>moment,</span> <span>heaven’s</span> <span>view</span> <br>
+            <span>Appears</span> <span>before</span> <span>my</span> <span>gaze.</span>
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const lyrics = document.querySelectorAll('.lyrics span');
+            lyrics.forEach(word => {
+                word.addEventListener('click', () => {
+                    word.style.display = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
