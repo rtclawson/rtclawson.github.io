@@ -1,144 +1,28 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            text-align: center;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h2>Stinky Pinky</h2>
-<div id='version'>Version 1.0.5</div>
-Clue1: <div id="clue-1"></div>
-
-Clue2: <div id="clue-2"></div>
-<br>
-Answer: <input type="text" name="answer" id='answer-input'><br>
-<div id="winner">You got it!</div>
-<script type="text/javascript">
-var failed = true;
-function request_word(source_word, word_type, success_callback) {
-    // see datamuse api for valid word_type, for example rel_spc
-    return $.ajax({
-      type: "GET",
-      url: 'https://api.datamuse.com/words?'+ word_type + '=' + source_word + "&md=p",
-      dataType: "json",
-      cache: false,
-      crossDomain: true,
-      processData: true,
-      async: false,
-      success: success_callback
-    });
-}
-function more_info(source_word, word_type, success_callback) {
-    // see datamuse api for valid word_type, for example rel_spc
-    return $.ajax({
-      type: "GET",
-      url: 'https://api.datamuse.com/words?sp=' + source_word + "&qe=sp&md=sp",
-      dataType: "json",
-      cache: false,
-      crossDomain: true,
-      processData: true,
-      async: false,
-      success: success_callback
-    });
-}
-function set_clue(clue, data) {
-  var str = '';
-  for (var i =0; i < data.length;i++){
-    str += data[i]['word'] + ', ';
-  }
-  if (!data.length)
-  {
-    failed = true;
-  }
-  clue.append(str);
-}
-function get_clues(ans1, ans2) {
- request_word(ans1, 'rel_spc', function(data){set_clue($('#clue-1'), data)});
- request_word(ans2, 'rel_spc', function(data){set_clue($('#clue-2'), data)});
-}
-words = ['time','year','people','way','day','man','thing','woman','life',
-   'child','world','school','state','family','student','group',
-   'country','problem','hand','part','place','case','week',
-   'company','system','program','question','work','government',
-   'number','night','point','home','water','room','mother','area',
-   'money','story','fact','month','lot','right','study','book','eye',
-   'job','word','business','issue','side','kind','head','house',
-   'service','friend','father','power','hour','game','line','end',
-   'member','law','car','city','community','name','president','team',
-   'minute','idea','kid','body','information','back','parent','face',
-   'others','level','office','door','health','person','art','war',
-   'history','party','result','change','morning','reason','research',
-   'girl','guy','moment','air','teacher','force','education'];
-  
-var clue1;
-var ans1 = 'init';
-var ans2 = 'init';
-var syllables;
-  
-function generate_first_puzzle_word() {
-  request_word(ans2, 'rel_rhy', function(data) {
-    console.log("Number of rhyming words: " + data.length);
-    var potential_words = [];
-    for (var index = 0; index < data.length; index++)
-    {
-      try{
-        if (data[index]['numSyllables'] === syllables && data[index]['tags'].indexOf('adj') > -1){
-          potential_words.push(data[index]['word']);
-          ans1 = potential_words[0];
-        }
-      } catch (e) {
-        console.log("Exception while trying to index into data object");
-      }
-    }
-    
-    if (!ans1) {
-      failed = True;
-    }
-    else {
-      console.log("Rhyming adjective: " + ans1);
-      console.log("Noun: " + ans2);
-      console.log(ans1 + " " + ans2);
-      get_clues(ans1, ans2);
-    }
-  });
-}
-  
-function generate_puzzle() {
-  ans2 = words[Math.floor(Math.random()*words.length)];
-  more_info(ans2, 'qe=sp', function(data){
-    if (!data.length) {
-      failed = True;
-    } else {
-      syllables = data[0]['numSyllables'];
-      console.log("Syllables = " + syllables);
-    }
-  });
-  console.log("First word: " + ans2);  
-  generate_first_puzzle_word();
-}
-  
-function setup_winner_div()
-{
-  $('#answer-input').on('input', function () {
-    var guess = $(this).val();
-    console.log(guess);
-    var words = guess.split(" ");
-    if (words[0] === ans1 && words[1] === ans2) {
-      $('#winner').show();
-    }
-    else {
-      $('#winner').hide();
-    }
-  });  
-}
-  
-$(document).ready(function() {
-  $('#winner').hide();
-  while (failed)
-  {
-    failed = false;
-    generate_puzzle();
-  }
-  setup_winner_div();
-});
-</script>
+    <h1>Welcome</h1>
+    <p>Click the link below to view the song lyrics:</p>
+    <p><a href="testimony.html">View Song Lyrics</a></p>
 </body>
 </html>
