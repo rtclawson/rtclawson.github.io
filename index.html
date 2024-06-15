@@ -3,26 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Clickable Lyrics</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             padding: 20px;
-            text-align: center;
         }
-        a {
-            text-decoration: none;
-            color: #007BFF;
+        .lyrics span {
+            cursor: pointer;
+            padding: 2px;
+            display: inline-block;
         }
-        a:hover {
+        .lyrics span:hover {
+            background-color: #f0f0f0;
+        }
+        .lyrics span.clicked {
+            color: transparent;
             text-decoration: underline;
+            text-decoration-color: black;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome</h1>
-    <p>Click the link below to view the song lyrics:</p>
-    <p><a href="testimony.html">View Song Lyrics</a></p>
+    <h1>Song Lyrics</h1>
+    <select id="songSelect">
+        <option value="">Select a song</option>
+    </select>
+    <div id="lyricsContainer" class="lyrics"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const songSelect = document.getElementById('songSelect');
+            const lyricsContainer = document.getElementById('lyricsContainer');
+
+            fetch('songs.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach((song, index) => {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = song.title;
+                        songSelect.appendChild(option);
+                    });
+
+                    songSelect.addEventListener('change', () => {
+                        const selectedSong = data[songSelect.value];
+                        if (selectedSong) {
+                            displayLyrics(selectedSong.verses);
+                        }
+                    });
+                });
+
+            function displayLyrics(verses) {
+                lyricsContainer.innerHTML = '';
+                verses.forEach(verse => {
+                    const verseContainer = document.createElement('div');
+                    verse.forEach(line => {
+                        const p = document.createElement('p');
+                        line.split(' ').forEach(word => {
+                            const span = document.createElement('span');
+                            span.textContent = word + ' ';
+                            span.addEventListener('click', () => {
+                                span.classList.add('clicked');
+                            });
+                            p.appendChild(span);
+                        });
+                        verseContainer.appendChild(p);
+                    });
+                    lyricsContainer.appendChild(verseContainer);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
