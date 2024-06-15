@@ -7,8 +7,33 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            background-color: #f9f9f9;
+            margin: 0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #333;
+        }
+        select, input[type="checkbox"] {
+            margin: 10px 0;
+            padding: 5px;
+            font-size: 1em;
+        }
+        #verseCheckboxes {
+            margin: 20px 0;
+            text-align: left;
+        }
+        #lyricsContainer {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .lyrics span {
             cursor: pointer;
@@ -16,7 +41,20 @@
             display: inline-block;
         }
         .lyrics span:hover {
-            background-color: #f0f0f0;
+            background-color: #e0e0e0;
+        }
+        .lyrics span.clicked {
+            color: transparent;
+            text-decoration: underline;
+            text-decoration-color: black;
+        }
+        label {
+            margin-right: 10px;
+        }
+        @media (max-width: 600px) {
+            #lyricsContainer {
+                padding: 10px;
+            }
         }
     </style>
 </head>
