@@ -25,12 +25,15 @@
     <select id="songSelect">
         <option value="">Select a song</option>
     </select>
+    <div id="verseCheckboxes"></div>
     <div id="lyricsContainer" class="lyrics"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const songSelect = document.getElementById('songSelect');
+            const verseCheckboxes = document.getElementById('verseCheckboxes');
             const lyricsContainer = document.getElementById('lyricsContainer');
+            let currentVerses = [];
 
             fetch('songs.json')
                 .then(response => response.json())
@@ -45,14 +48,35 @@
                     songSelect.addEventListener('change', () => {
                         const selectedSong = data[songSelect.value];
                         if (selectedSong) {
-                            displayLyrics(selectedSong.verses);
+                            currentVerses = selectedSong.verses;
+                            displayVerseCheckboxes(selectedSong.verses);
                         }
                     });
                 });
 
-            function displayLyrics(verses) {
+            function displayVerseCheckboxes(verses) {
+                verseCheckboxes.innerHTML = '';
+                verses.forEach((verse, index) => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `verse${index}`;
+                    checkbox.value = index;
+                    checkbox.addEventListener('change', displayLyrics);
+                    const label = document.createElement('label');
+                    label.htmlFor = `verse${index}`;
+                    label.textContent = `Verse ${index + 1}`;
+                    verseCheckboxes.appendChild(checkbox);
+                    verseCheckboxes.appendChild(label);
+                    verseCheckboxes.appendChild(document.createElement('br'));
+                });
+            }
+
+            function displayLyrics() {
                 lyricsContainer.innerHTML = '';
-                verses.forEach(verse => {
+                const checkedCheckboxes = verseCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+                checkedCheckboxes.forEach(checkbox => {
+                    const verseIndex = checkbox.value;
+                    const verse = currentVerses[verseIndex];
                     const verseContainer = document.createElement('div');
                     verse.forEach(line => {
                         const p = document.createElement('p');
