@@ -65,7 +65,11 @@
                             const span = document.createElement('span');
                             span.textContent = word + ' ';
                             span.addEventListener('click', () => {
-                                span.classList.add('clicked');
+                                if (span.classList.contains('clicked')) {
+                                    span.classList.remove('clicked');
+                                } else {
+                                    span.classList.add('clicked');
+                                }
                             });
                             p.appendChild(span);
                         });
