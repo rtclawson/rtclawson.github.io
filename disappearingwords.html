@@ -59,6 +59,9 @@
         #controlButtons {
             margin-top: 20px;
         }
+        .verseContainer {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +119,8 @@
                             const selectedSong = data[songSelect.value];
                             if (selectedSong) {
                                 currentVerses = selectedSong.verses;
+                                verseCheckboxes.innerHTML = '';
+                                lyricsContainer.innerHTML = '';
                                 displayVerseCheckboxes(selectedSong.verses);
                             }
                         });
@@ -146,6 +151,7 @@
                     const verseIndex = checkbox.value;
                     const verse = currentVerses[verseIndex];
                     const verseContainer = document.createElement('div');
+                    verseContainer.classList.add('verseContainer');
                     verse.forEach(line => {
                         const p = document.createElement('p');
                         line.split(' ').forEach(word => {
