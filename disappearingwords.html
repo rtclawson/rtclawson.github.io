@@ -78,6 +78,7 @@
     <div id="controlButtons">
         <button id="restoreButton">Restore All Lyrics</button>
         <button id="blankButton">Make All Lyrics Blanks</button>
+        <button id="partialBlankButton">Keep First Two Words of Each Line</button>
     </div>
     <div id="lyricsContainer" class="lyrics"></div>
 
@@ -89,6 +90,7 @@
             const lyricsContainer = document.getElementById('lyricsContainer');
             const restoreButton = document.getElementById('restoreButton');
             const blankButton = document.getElementById('blankButton');
+            const partialBlankButton = document.getElementById('partialBlankButton');
             let currentVerses = [];
 
             categorySelect.addEventListener('change', () => {
@@ -109,10 +111,12 @@
                     .then(data => {
                         songSelect.innerHTML = '<option value="">Select a song</option>';
                         data.forEach((song, index) => {
-                            const option = document.createElement('option');
-                            option.value = index;
-                            option.textContent = song.title;
-                            songSelect.appendChild(option);
+                            if (song.title !== 'Unknown') {
+                                const option = document.createElement('option');
+                                option.value = index;
+                                option.textContent = song.title;
+                                songSelect.appendChild(option);
+                            }
                         });
 
                         songSelect.addEventListener('change', () => {
@@ -140,7 +144,7 @@
                     label.textContent = `Verse ${index + 1}`;
                     verseCheckboxes.appendChild(checkbox);
                     verseCheckboxes.appendChild(label);
-                    verseCheckboxes.appendChild(document.createElement('br'));
+                    // verseCheckboxes.appendChild(document.createElement('br'));
                 });
             }
 
@@ -190,6 +194,26 @@
                     const underscores = '_'.repeat(span.getAttribute('data-word').length);
                     span.textContent = underscores + ' ';
                     span.setAttribute('data-hidden', 'true');
+                });
+            });
+
+            partialBlankButton.addEventListener('click', () => {
+                const verseContainers = lyricsContainer.querySelectorAll('.verseContainer');
+                verseContainers.forEach(verseContainer => {
+                    const paragraphs = verseContainer.querySelectorAll('p');
+                    paragraphs.forEach(paragraph => {
+                        const spans = paragraph.querySelectorAll('span');
+                        spans.forEach((span, index) => {
+                            if (index >= 2) {
+                                const underscores = '_'.repeat(span.getAttribute('data-word').length);
+                                span.textContent = underscores + ' ';
+                                span.setAttribute('data-hidden', 'true');
+                            } else {
+                                span.textContent = span.getAttribute('data-word') + ' ';
+                                span.setAttribute('data-hidden', 'false');
+                            }
+                        });
+                    });
                 });
             });
         });
