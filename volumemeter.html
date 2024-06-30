@@ -66,6 +66,27 @@
             transform-origin: bottom center;
             transform: rotate(-90deg);
         }
+        .label {
+            position: absolute;
+            font-size: 14px;
+            color: #ff6347;
+        }
+        .label.inaudible {
+            left: 0;
+            top: -30px;
+        }
+        .label.quiet {
+            left: 25%;
+            top: -50px;
+        }
+        .label.loud {
+            left: 65%;
+            top: -50px;
+        }
+        .label.blasting {
+            right: 0;
+            top: -30px;
+        }
         .smile {
             margin-top: 30px;
             font-size: 24px;
@@ -91,6 +112,10 @@
     <div class="gauge-container">
         <div class="gauge">
             <div class="needle" id="needle"></div>
+            <div class="label inaudible">Inaudible</div>
+            <div class="label quiet">Quiet</div>
+            <div class="label loud">Loud</div>
+            <div class="label blasting">Blasting</div>
         </div>
     </div>
     <div class="smile" id="smile">😊</div>
