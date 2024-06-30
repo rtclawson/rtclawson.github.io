@@ -77,15 +77,25 @@
                 analyser.connect(javascriptNode);
                 javascriptNode.connect(audioContext.destination);
 
+                let noiseFloor = 0;
+                let noiseFloorInitialized = false;
+
                 javascriptNode.onaudioprocess = function() {
                     const array = new Uint8Array(analyser.frequencyBinCount);
                     analyser.getByteFrequencyData(array);
                     const average = array.reduce((a, b) => a + b) / array.length;
-                    const rotation = (average / 256) * 180 - 90;  // Scale to -90 to 90 degrees
+
+                    if (!noiseFloorInitialized) {
+                        noiseFloor = average;
+                        noiseFloorInitialized = true;
+                    }
+
+                    const adjustedVolume = average - noiseFloor;
+                    const rotation = Math.min((adjustedVolume / 128) * 180 - 90, 90);  // Scale to -90 to 90 degrees
 
                     needle.style.transform = `rotate(${rotation}deg)`;
 
-                    if (average > 64) {
+                    if (adjustedVolume > 64) {
                         smile.innerText = '😃';
                     } else {
                         smile.innerText = '😊';
