@@ -84,7 +84,7 @@
                     const array = new Float32Array(analyser.fftSize);
                     analyser.getFloatTimeDomainData(array);
                     const rms = Math.sqrt(array.reduce((sum, value) => sum + value * value, 0) / array.length);
-                    const volume = rms * 1000;  // Scale up the RMS value
+                    const volume = rms * 100;  // Scale up the RMS value
 
                     if (!noiseFloorInitialized) {
                         noiseFloor = volume;
@@ -92,11 +92,11 @@
                     }
 
                     const adjustedVolume = volume - noiseFloor;
-                    const rotation = Math.min((adjustedVolume / 20) * 180 - 90, 90);  // Scale to -90 to 90 degrees
+                    const rotation = Math.min((adjustedVolume / 10) * 180 - 90, 90);  // Scale to -90 to 90 degrees
 
                     needle.style.transform = `rotate(${rotation}deg)`;
 
-                    if (adjustedVolume > 10) {
+                    if (adjustedVolume > 5) {
                         smile.innerText = '😃';
                     } else {
                         smile.innerText = '😊';
