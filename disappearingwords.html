@@ -105,36 +105,37 @@
                 }
             });
 
+            songSelect.addEventListener('change', () => {
+                const selectedSong = songSelect.options[songSelect.selectedIndex].value;
+                if (selectedSong) {
+                    currentVerses = JSON.parse(songSelect.dataset.songs)[selectedSong].verses;
+                    verseCheckboxes.innerHTML = '';
+                    lyricsContainer.innerHTML = '';
+                    displayVerseCheckboxes(currentVerses);
+                }
+            });
+
             function fetchSongs(category) {
+                let url = '';
                 if (category === 'hymns') {
-                    const url = 'hymns.json'
+                    url = 'hymns.json';
+                } else if (category === 'childrenssongs') {
+                    url = 'childrenssongbook.json';
+                } else if (category === 'newsongs') {
+                    url = 'newsongs.json';
                 }
-                if (category === 'childrenssongs') {
-                    const url = 'childrenssongbook.json'
-                }
-                if (category === 'newsongs') {
-                    const url = 'newsongs.json'
-                }
+
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         songSelect.innerHTML = '<option value="">Select a song</option>';
+                        songSelect.dataset.songs = JSON.stringify(data);
                         data.forEach((song, index) => {
                             if (song.title !== 'Unknown') {
                                 const option = document.createElement('option');
                                 option.value = index;
                                 option.textContent = song.title;
                                 songSelect.appendChild(option);
-                            }
-                        });
-
-                        songSelect.addEventListener('change', () => {
-                            const selectedSong = data[songSelect.value];
-                            if (selectedSong) {
-                                currentVerses = selectedSong.verses;
-                                verseCheckboxes.innerHTML = '';
-                                lyricsContainer.innerHTML = '';
-                                displayVerseCheckboxes(selectedSong.verses);
                             }
                         });
                     });
