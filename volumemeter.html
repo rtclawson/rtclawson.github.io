@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sing Louder!</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #ff6347;
+            font-size: 48px;
+        }
+        .gauge-container {
+            margin-top: 50px;
+        }
+        .gauge {
+            width: 200px;
+            height: 200px;
+            background-color: #dcdcdc;
+            border-radius: 50%;
+            border: 10px solid #ff6347;
+            position: relative;
+        }
+        .needle {
+            width: 2px;
+            height: 100px;
+            background-color: #ff6347;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: rotate(0deg);
+        }
+        .smile {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #ff6347;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sing Louder!</h1>
+    <p>Use your voice to move the needle!</p>
+    <div class="gauge-container">
+        <div class="gauge">
+            <div class="needle" id="needle"></div>
+        </div>
+    </div>
+    <div class="smile" id="smile">😊</div>
+
+    <script>
+        const needle = document.getElementById('needle');
+        const smile = document.getElementById('smile');
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const analyser = audioContext.createAnalyser();
+                const microphone = audioContext.createMediaStreamSource(stream);
+                const javascriptNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+                analyser.smoothingTimeConstant = 0.8;
+                analyser.fftSize = 1024;
+
+                microphone.connect(analyser);
+                analyser.connect(javascriptNode);
+                javascriptNode.connect(audioContext.destination);
+
+                javascriptNode.onaudioprocess = function() {
+                    const array = new Uint8Array(analyser.frequencyBinCount);
+                    analyser.getByteFrequencyData(array);
+                    const average = array.reduce((a, b) => a + b) / array.length;
+                    const rotation = (average / 256) * 180 - 90;  // Scale to -90 to 90 degrees
+
+                    needle.style.transform = `rotate(${rotation}deg)`;
+
+                    if (average > 128) {
+                        smile.innerText = '😃';
+                    } else {
+                        smile.innerText = '😊';
+                    }
+                };
+            }).catch(err => {
+                console.error('The following getUserMedia error occurred: ' + err);
+            });
+        } else {
+            console.warn('getUserMedia not supported on your browser!');
+        }
+    </script>
+</body>
+</html>
