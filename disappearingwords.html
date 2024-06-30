@@ -106,13 +106,13 @@
             });
 
             function fetchSongs(category) {
-                if category === 'hymns' {
+                if (category === 'hymns') {
                     const url = 'hymns.json'
                 }
-                if category === 'childrenssongs' {
+                if (category === 'childrenssongs') {
                     const url = 'childrenssongbook.json'
                 }
-                if category === 'newsongs' {
+                if (category === 'newsongs') {
                     const url = 'newsongs.json'
                 }
                 fetch(url)
