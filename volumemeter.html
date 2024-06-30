@@ -17,24 +17,27 @@
         }
         .gauge-container {
             margin-top: 50px;
+            position: relative;
         }
         .gauge {
             width: 200px;
-            height: 200px;
+            height: 100px;
             background-color: #dcdcdc;
-            border-radius: 50%;
+            border-top-left-radius: 100px;
+            border-top-right-radius: 100px;
             border: 10px solid #ff6347;
+            border-bottom: none;
             position: relative;
         }
         .needle {
-            width: 2px;
+            width: 4px;
             height: 100px;
             background-color: #ff6347;
             position: absolute;
-            top: 50%;
+            top: 100%;
             left: 50%;
             transform-origin: bottom center;
-            transform: rotate(0deg);
+            transform: rotate(-90deg);
         }
         .smile {
             margin-top: 30px;
@@ -79,7 +82,7 @@
 
                     needle.style.transform = `rotate(${rotation}deg)`;
 
-                    if (average > 128) {
+                    if (average > 64) {
                         smile.innerText = '😃';
                     } else {
                         smile.innerText = '😊';
