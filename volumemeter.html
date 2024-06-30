@@ -9,14 +9,38 @@
             background-color: #f0f8ff;
             font-family: 'Comic Sans MS', 'Comic Sans', cursive;
             text-align: center;
-            padding: 50px;
+            padding: 20px;
         }
         h1 {
             color: #ff6347;
             font-size: 48px;
         }
+        .controls {
+            margin: 20px 0;
+        }
+        .control-group {
+            margin-bottom: 10px;
+        }
+        label {
+            font-size: 18px;
+            color: #ff6347;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
         .gauge-container {
-            margin-top: 50px;
+            margin-top: 20px;
             position: relative;
             width: 200px;
             height: 100px;
@@ -37,7 +61,7 @@
             height: 100px;
             background-color: #ff6347;
             position: absolute;
-            bottom: 0px;
+            bottom: -10px;
             left: 50%;
             transform-origin: bottom center;
             transform: rotate(-90deg);
@@ -51,6 +75,18 @@
 </head>
 <body>
     <h1>Sing Louder!</h1>
+    <div class="controls">
+        <div class="control-group">
+            <label for="averageWindow">Moving Average Window:</label>
+            <input type="number" id="averageWindow" value="20" min="1">
+        </div>
+        <div class="control-group">
+            <label for="volumeRange">Volume Range:</label>
+            <input type="number" id="volumeRange" value="10" min="1">
+        </div>
+        <button id="calibrateNoise">Recalibrate Noise Floor</button>
+        <button id="changeFaces">Change Faces</button>
+    </div>
     <p>Use your voice to move the needle!</p>
     <div class="gauge-container">
         <div class="gauge">
@@ -62,8 +98,15 @@
     <script>
         const needle = document.getElementById('needle');
         const smile = document.getElementById('smile');
+        const averageWindowInput = document.getElementById('averageWindow');
+        const volumeRangeInput = document.getElementById('volumeRange');
+        const calibrateNoiseButton = document.getElementById('calibrateNoise');
+        const changeFacesButton = document.getElementById('changeFaces');
         const volumeHistory = [];
-        const historyLength = 20; // Length of the moving average window
+        const faces = [['😊', '😃'], ['😐', '😁'], ['🙃', '😆'], ['😶', '😄']];
+        let currentFaces = 0;
+        let historyLength = parseInt(averageWindowInput.value);
+        let volumeRange = parseInt(volumeRangeInput.value);
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
@@ -101,16 +144,32 @@
                     }
 
                     const averageVolume = volumeHistory.reduce((a, b) => a + b, 0) / volumeHistory.length;
-                    const rotation = Math.min((averageVolume / 10) * 180 - 90, 90);  // Scale to -90 to 90 degrees
+                    const rotation = Math.min((averageVolume / volumeRange) * 180 - 90, 90);  // Scale to -90 to 90 degrees
 
                     needle.style.transform = `rotate(${rotation}deg)`;
 
-                    if (averageVolume > 5) {
-                        smile.innerText = '😃';
+                    if (averageVolume > volumeRange / 2) {
+                        smile.innerText = faces[currentFaces][1];
                     } else {
-                        smile.innerText = '😊';
+                        smile.innerText = faces[currentFaces][0];
                     }
                 };
+
+                calibrateNoiseButton.addEventListener('click', () => {
+                    noiseFloorInitialized = false;
+                });
+
+                changeFacesButton.addEventListener('click', () => {
+                    currentFaces = (currentFaces + 1) % faces.length;
+                });
+
+                averageWindowInput.addEventListener('change', (event) => {
+                    historyLength = parseInt(event.target.value);
+                });
+
+                volumeRangeInput.addEventListener('change', (event) => {
+                    volumeRange = parseInt(event.target.value);
+                });
             }).catch(err => {
                 console.error('The following getUserMedia error occurred: ' + err);
             });
